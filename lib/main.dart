@@ -198,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
 
 class _ShadesList extends StatelessWidget {
   static const _primary = Color(0xFFEF5388);
-  static const _tones = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90];
+  static const _tones = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100];
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +216,7 @@ class _ShadesList extends StatelessWidget {
           child: Text(
             'Tone $tone',
             style: TextStyle(
-              color: tone >= 50 ? Colors.black87 : Colors.white,
+              color: tone >= 40 ? Colors.black87 : Colors.white,
               fontWeight: FontWeight.w600,
               fontSize: 14,
             ),
