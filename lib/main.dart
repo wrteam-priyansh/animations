@@ -2,7 +2,7 @@ import 'package:animations/color_shades.dart';
 import 'package:animations/screens/cart_animation_screen.dart';
 import 'package:flutter/material.dart';
 
-class GetStartedButton extends StatelessWidget {
+class GetStartedButton extends StatefulWidget {
   final VoidCallback onTap;
   final Color color;
 
@@ -12,66 +12,135 @@ class GetStartedButton extends StatelessWidget {
     this.color = const Color(0xFFEF5388),
   });
 
-  Color get _shadowColor => Color.lerp(color, Colors.black, 0.30)!;
-  Color get _bottomColor => Color.lerp(color, Colors.white, 0.1)!;
+  @override
+  State<GetStartedButton> createState() => _GetStartedButtonState();
+}
+
+class _GetStartedButtonState extends State<GetStartedButton>
+    with TickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1500),
+  )..repeat();
+
+  late final AnimationController _pressController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 80),
+  );
+
+  late final Animation<double> _shadowOffset = Tween<double>(
+    begin: 4.5,
+    end: 1.5,
+  ).animate(CurvedAnimation(parent: _pressController, curve: Curves.easeOut));
+
+  Animation<double> _shine1(double width) =>
+      Tween<double>(begin: -40.0, end: width + 20.0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+  Animation<double> _shine2(double width) =>
+      Tween<double>(begin: -22.0, end: width + 38.0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+  Color get _shadowColor => Color.lerp(widget.color, Colors.black, 0.30)!;
+  Color get _bottomColor => Color.lerp(widget.color, Colors.white, 0.1)!;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _pressController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 50,
-        width: 326,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [color, _bottomColor],
+      behavior: HitTestBehavior.opaque,
+      onTap: (){
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(builder: (context) => CartAnimationScreen())
+        // );
+      },
+      onTapDown: (_) {
+        // print("Tapped down");
+        _pressController.forward();
+      },
+      onTapUp: (_) {
+        // print("Tapped up");
+        _pressController.reverse();
+      },
+      onTapCancel: () {
+        // print("Tapped cancel");
+        _pressController.reverse();
+      },
+      child: AnimatedBuilder(
+        animation: _shadowOffset,
+        builder: (context, child) => Container(
+          height: 50,
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: 32),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [widget.color, _bottomColor],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: _shadowColor,
+                offset: Offset(0, _shadowOffset.value),
+                blurRadius: 0,
+              ),
+            ],
           ),
-          boxShadow: [
-            BoxShadow(
-              color: _shadowColor,
-              offset: const Offset(0, 4.5),
-              blurRadius: 0,
-            ),
-          ],
+          child: child,
         ),
-        child: Stack(
-          // clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              left: 40,
-              top: 0,
-              child: Transform.rotate(
-                alignment: Alignment.topRight,
-                angle: 25 * 3.14159 / 180,
-                child: Container(width: 13, height: 100, color: Colors.white.withValues(alpha: 0.3)),
-              ),
-            ),
-            Positioned(
-              left: 58,
-              top: 0,
-              child: Transform.rotate(
-                alignment: Alignment.topRight,
-                angle: 25 * 3.14159 / 180,
-                child: Container(width: 8, height: 100, color: Colors.white.withValues(alpha: 0.1)),
-              ),
-            ),
-            Center(
-              child: Text(
-                'Get Started',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  fontFamily: 'Candal',
-                  letterSpacing: 0.15,
-                  shadows: [Shadow(color: _shadowColor, offset: const Offset(0, 2.5))],
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final w = constraints.maxWidth;
+              return AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Stack(
+                    children: [
+                      Positioned(
+                        left: _shine1(w).value,
+                        top: 0,
+                        child: Transform.rotate(
+                          alignment: Alignment.topRight,
+                          angle: 25 * 3.14159 / 180,
+                          child: Container(width: 13, height: 100, color: Colors.white.withValues(alpha: 0.3)),
+                        ),
+                      ),
+                      Positioned(
+                        left: _shine2(w).value,
+                        top: 0,
+                        child: Transform.rotate(
+                          alignment: Alignment.topRight,
+                          angle: 25 * 3.14159 / 180,
+                          child: Container(width: 8, height: 100, color: Colors.white.withValues(alpha: 0.1)),
+                        ),
+                      ),
+                      child!,
+                    ],
+                  );
+                },
+                child: Center(
+                  child: Text(
+                    'Get Started',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      fontFamily: 'Candal',
+                      letterSpacing: 0.15,
+                      shadows: [Shadow(color: _shadowColor, offset: const Offset(0, 2.5))],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -185,12 +254,24 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
         //   );
         // }),
         backgroundColor: Colors.white,
-        body: Padding(
-          padding: EdgeInsetsGeometry.only(
-            top: MediaQuery.of(context).padding.top
-          ),
-          child: _ShadesList(),
+        body: Stack(
+          children: [
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 40),
+                child: GetStartedButton(onTap: () {}),
+              ),
+            )
+
+          ],
         ),
+        // body: Padding(
+        //   padding: EdgeInsetsGeometry.only(
+        //     top: MediaQuery.of(context).padding.top
+        //   ),
+        //   child: _ShadesList(),
+        // ),
       ),
     );
   }
