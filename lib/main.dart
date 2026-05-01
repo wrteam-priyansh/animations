@@ -1,5 +1,7 @@
+
 import 'package:animations/color_shades.dart';
-import 'package:animations/screens/cart_animation_screen.dart';
+import 'package:animations/screens/life_line_animation_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class GetStartedButton extends StatefulWidget {
@@ -54,6 +56,7 @@ class _GetStartedButtonState extends State<GetStartedButton>
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: (){
+        widget.onTap.call();
         // Navigator.of(context).push(
         //   MaterialPageRoute(builder: (context) => CartAnimationScreen())
         // );
@@ -177,6 +180,12 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
+      builder: (context, child) {
+      return SafeArea(
+        top: false,
+        child: child!,
+      );
+      },
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -260,7 +269,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 40),
-                child: GetStartedButton(onTap: () {}),
+                child: GetStartedButton(onTap: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(builder: (context) => LifeLineAnimationScreen())
+                  );
+                }),
               ),
             )
 
