@@ -1,6 +1,5 @@
 
 import 'package:animations/color_shades.dart';
-import 'package:animations/screens/life_line_animation_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -263,58 +262,103 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
         //   );
         // }),
         backgroundColor: Colors.white,
-        // body: Stack(
-        //   children: [
-        //     Align(
-        //       alignment: Alignment.bottomCenter,
-        //       child: Padding(
-        //         padding: const EdgeInsets.only(bottom: 40),
-        //         child: GetStartedButton(onTap: () {
-        //           Navigator.of(context).push(
-        //             CupertinoPageRoute(builder: (context) => LifeLineAnimationScreen())
-        //           );
-        //         }),
-        //       ),
-        //     )
-
-        //   ],
-        // ),
+        appBar: AppBar(
+          title: const Text('Color Shades Explorer'),
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+        ),
         body: Padding(
-          padding: EdgeInsetsGeometry.only(
-            top: MediaQuery.of(context).padding.top
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).push(
+                  CupertinoPageRoute(builder: (_) => const _LerpShadesScreen()),
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Color Lerp', style: TextStyle(fontSize: 16)),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).push(
+                  CupertinoPageRoute(builder: (_) => const _HctShadesScreen()),
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Color HCT', style: TextStyle(fontSize: 16)),
+              ),
+            ],
           ),
-          child: _ShadesList(),
         ),
       ),
     );
   }
 }
 
+class _LerpShadesScreen extends StatelessWidget {
+  const _LerpShadesScreen();
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Color Lerp'),
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+        ),
+        body: _ShadesList(useHct: false),
+      );
+}
+
+class _HctShadesScreen extends StatelessWidget {
+  const _HctShadesScreen();
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Color HCT'),
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+        ),
+        body: _ShadesList(useHct: true),
+      );
+}
+
 class _ShadesList extends StatelessWidget {
-  static const _primary =  Color(0xFFEF5388);//; Color(0xff1A73E8); //;Color(0xFFEF5388);
+  final bool useHct;
+
+  const _ShadesList({required this.useHct});
+
+  static const _primary = Color(0xFFEF5388);
   static const _tones = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100];
 
   static String _hex(Color c) =>
       '#${c.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
 
-  void _printToneMap() {
-    final shades = ColorShades(_primary);
-    final map = {for (final t in _tones) t: _hex(shades.shade(t))};
-    debugPrint('=== Color Tone Map ===');
+  void _printToneMap(ColorShades shades) {
+    final label = useHct ? 'HCT' : 'Lerp';
+    final map = {for (final t in _tones) t: _hex(useHct ? shades.shadeHct(t) : shades.shade(t))};
+    debugPrint('=== Color Tone Map ($label) ===');
     map.forEach((tone, hex) => debugPrint('  Tone $tone: $hex'));
-    debugPrint('=====================');
+    debugPrint('================================');
   }
 
   @override
   Widget build(BuildContext context) {
     final shades = ColorShades(_primary);
-    _printToneMap();
+    _printToneMap(shades);
 
     return ListView.builder(
       itemCount: _tones.length,
       itemBuilder: (context, index) {
         final tone = _tones[index];
-        final color = shades.shade(tone);
+        final color = useHct ? shades.shadeHct(tone) : shades.shade(tone);
         return Container(
           height: 72,
           color: color,
@@ -333,7 +377,7 @@ class _ShadesList extends StatelessWidget {
                 ),
               ),
               Text(
-                '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}  •  rgb(${(color.r * 255).round()}, ${(color.g * 255).round()}, ${(color.b * 255).round()})',
+                '${_hex(color)}  •  rgb(${(color.r * 255).round()}, ${(color.g * 255).round()}, ${(color.b * 255).round()})',
                 style: TextStyle(
                   color: (tone >= 40 ? Colors.black87 : Colors.white).withValues(alpha: 0.7),
                   fontSize: 11,

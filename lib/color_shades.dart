@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:material_color_utilities/material_color_utilities.dart';
 
 class ColorShades {
   final Color base;
+  late final TonalPalette _palette;
 
-  const ColorShades(this.base);
+  ColorShades(this.base) {
+    final hct = Hct.fromInt(base.toARGB32());
+    _palette = TonalPalette.of(hct.hue, hct.chroma);
+  }
 
+  // Lerp-based tone (0 = black, 100 = white, 50 = base)
   Color shade(int tone) {
     if (tone <= 0) return Colors.black;
     if (tone >= 100) return Colors.white;
     if (tone <= 50) return Color.lerp(Colors.black, base, tone / 50)!;
     return Color.lerp(base, Colors.white, (tone - 50) / 50)!;
   }
+
+  // HCT-based tone — same algorithm ColorScheme.fromSeed uses internally
+  Color shadeHct(int tone) => Color(_palette.get(tone));
 
   Color get s0   => Colors.black;
   Color get s10  => shade(10);
