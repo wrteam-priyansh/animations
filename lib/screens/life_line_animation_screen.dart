@@ -137,7 +137,7 @@ class _LifeLineCard extends StatefulWidget {
 
 class _LifeLineCardState extends State<_LifeLineCard> with TickerProviderStateMixin {
   
-  final Duration animationDuration = const Duration(milliseconds: 400);
+  final Duration animationDuration = const Duration(milliseconds: 200);
   late final  Duration iconEndAnimationDuration =  Duration(milliseconds: animationDuration.inMilliseconds ~/ 10);
 
   late final AnimationController _controller = AnimationController(

@@ -263,40 +263,53 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
         //   );
         // }),
         backgroundColor: Colors.white,
-        body: Stack(
-          children: [
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 40),
-                child: GetStartedButton(onTap: () {
-                  Navigator.of(context).push(
-                    CupertinoPageRoute(builder: (context) => LifeLineAnimationScreen())
-                  );
-                }),
-              ),
-            )
+        // body: Stack(
+        //   children: [
+        //     Align(
+        //       alignment: Alignment.bottomCenter,
+        //       child: Padding(
+        //         padding: const EdgeInsets.only(bottom: 40),
+        //         child: GetStartedButton(onTap: () {
+        //           Navigator.of(context).push(
+        //             CupertinoPageRoute(builder: (context) => LifeLineAnimationScreen())
+        //           );
+        //         }),
+        //       ),
+        //     )
 
-          ],
-        ),
-        // body: Padding(
-        //   padding: EdgeInsetsGeometry.only(
-        //     top: MediaQuery.of(context).padding.top
-        //   ),
-        //   child: _ShadesList(),
+        //   ],
         // ),
+        body: Padding(
+          padding: EdgeInsetsGeometry.only(
+            top: MediaQuery.of(context).padding.top
+          ),
+          child: _ShadesList(),
+        ),
       ),
     );
   }
 }
 
 class _ShadesList extends StatelessWidget {
-  static const _primary = Color(0xFFEF5388);
+  static const _primary =  Color(0xFFEF5388);//; Color(0xff1A73E8); //;Color(0xFFEF5388);
   static const _tones = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100];
+
+  static String _hex(Color c) =>
+      '#${c.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
+
+  void _printToneMap() {
+    final shades = ColorShades(_primary);
+    final map = {for (final t in _tones) t: _hex(shades.shade(t))};
+    debugPrint('=== Color Tone Map ===');
+    map.forEach((tone, hex) => debugPrint('  Tone $tone: $hex'));
+    debugPrint('=====================');
+  }
 
   @override
   Widget build(BuildContext context) {
     final shades = ColorShades(_primary);
+    _printToneMap();
+
     return ListView.builder(
       itemCount: _tones.length,
       itemBuilder: (context, index) {
@@ -307,13 +320,26 @@ class _ShadesList extends StatelessWidget {
           color: color,
           padding: const EdgeInsets.symmetric(horizontal: 20),
           alignment: Alignment.centerLeft,
-          child: Text(
-            'Tone $tone',
-            style: TextStyle(
-              color: tone >= 40 ? Colors.black87 : Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Tone $tone',
+                style: TextStyle(
+                  color: tone >= 40 ? Colors.black87 : Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}  •  rgb(${(color.r * 255).round()}, ${(color.g * 255).round()}, ${(color.b * 255).round()})',
+                style: TextStyle(
+                  color: (tone >= 40 ? Colors.black87 : Colors.white).withValues(alpha: 0.7),
+                  fontSize: 11,
+                ),
+              ),
+            ],
           ),
         );
       },
