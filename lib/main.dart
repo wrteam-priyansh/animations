@@ -1,16 +1,16 @@
 
 import 'package:animations/color_shades.dart';
+import 'package:animations/color_tokens.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class GetStartedButton extends StatefulWidget {
   final VoidCallback onTap;
-  final Color color;
+
 
   const GetStartedButton({
     super.key,
     required this.onTap,
-    this.color = const Color(0xFFEF5388),
   });
 
   @override
@@ -84,11 +84,11 @@ class _GetStartedButtonState extends State<GetStartedButton>
               end: Alignment.bottomCenter,
 
               //
-              colors: [Color(0xff00A741),Color(0XFF30C456)],//primary60, primary70, primary40 (Shadow color)
+              colors: [ColorTokens.primary.s60,ColorTokens.primary.s70],//primary60, primary70, primary40 (Shadow color)
             ),
             boxShadow: [
               BoxShadow(
-                color: Color(0XFF006E28),//tone40
+                color: ColorTokens.primary.s40,//tone40
                 offset: Offset(0, _shadowOffset.value),
                 blurRadius: 0,
               ),
@@ -139,7 +139,7 @@ class _GetStartedButtonState extends State<GetStartedButton>
                       letterSpacing: 0.15,
                       shadows: [
                         
-                        Shadow(color: Color(0XFF006E28), offset: const Offset(0, 2.5))],
+                        Shadow(color: ColorTokens.primary.s40, offset: const Offset(0, 2.5))],
                     ),
                   ),
                 ),
@@ -165,25 +165,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(
-        
-          seedColor: Colors.deepPurple),
+        colorScheme: ColorTokens.lightScheme(),
+        useMaterial3: true,
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorTokens.darkScheme(),
+        useMaterial3: true,
+      ),
+      themeMode: ThemeMode.system,
       builder: (context, child) {
       return SafeArea(
         top: false,
