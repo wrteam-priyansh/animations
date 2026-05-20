@@ -40,8 +40,6 @@ class _GetStartedButtonState extends State<GetStartedButton>
   Animation<double> _shine2(double width) =>
       Tween<double>(begin: -22.0, end: width + 38.0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
-  Color get _shadowColor => Color.lerp(widget.color, Colors.black, 0.30)!;
-  Color get _bottomColor => Color.lerp(widget.color, Colors.white, 0.1)!;
 
   @override
   void dispose() {
@@ -79,15 +77,18 @@ class _GetStartedButtonState extends State<GetStartedButton>
           width: double.infinity,
           margin: const EdgeInsets.symmetric(horizontal: 32),
           decoration: BoxDecoration(
+            // color: widget.color,
             borderRadius: BorderRadius.circular(16),
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [widget.color, _bottomColor],
+
+              //
+              colors: [Color(0xff00A741),Color(0XFF30C456)],//primary60, primary70, primary40 (Shadow color)
             ),
             boxShadow: [
               BoxShadow(
-                color: _shadowColor,
+                color: Color(0XFF006E28),//tone40
                 offset: Offset(0, _shadowOffset.value),
                 blurRadius: 0,
               ),
@@ -136,7 +137,9 @@ class _GetStartedButtonState extends State<GetStartedButton>
                       fontWeight: FontWeight.w800,
                       fontFamily: 'Candal',
                       letterSpacing: 0.15,
-                      shadows: [Shadow(color: _shadowColor, offset: const Offset(0, 2.5))],
+                      shadows: [
+                        
+                        Shadow(color: Color(0XFF006E28), offset: const Offset(0, 2.5))],
                     ),
                   ),
                 ),
@@ -177,7 +180,9 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: .fromSeed(
+        
+          seedColor: Colors.deepPurple),
       ),
       builder: (context, child) {
       return SafeArea(
@@ -273,27 +278,42 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).push(
-                  CupertinoPageRoute(builder: (_) => const _LerpShadesScreen()),
-                ),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: const Text('Color Lerp', style: TextStyle(fontSize: 16)),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).push(
-                  CupertinoPageRoute(builder: (_) => const _HctShadesScreen()),
-                ),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: const Text('Color HCT', style: TextStyle(fontSize: 16)),
-              ),
+
+              GetStartedButton(
+                onTap: () {})
+
+              // IconButton(onPressed: () async{
+
+              //  await showDialog(context: context, builder: (context) => AlertDialog(
+              //     title: Text("Color Shades Explorer"),
+              //     content: Text("This is a demo of the ColorShades class, which generates color shades using both linear interpolation and HCT methods. Check the console for tone maps."),
+              //     actions: [
+              //       TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("Close")),
+              //       TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("Do not close")),
+              //     ],
+              //   ));
+              // }, icon: Icon(Icons.ad_units))
+              // ElevatedButton(
+              //   onPressed: () => Navigator.of(context).push(
+              //     CupertinoPageRoute(builder: (_) => const _LerpShadesScreen()),
+              //   ),
+              //   style: ElevatedButton.styleFrom(
+              //     padding: const EdgeInsets.symmetric(vertical: 16),
+              //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              //   ),
+              //   child: const Text('Color Lerp', style: TextStyle(fontSize: 16)),
+              // ),
+              // const SizedBox(height: 16),
+              // ElevatedButton(
+              //   onPressed: () => Navigator.of(context).push(
+              //     CupertinoPageRoute(builder: (_) => const _HctShadesScreen()),
+              //   ),
+              //   style: ElevatedButton.styleFrom(
+              //     padding: const EdgeInsets.symmetric(vertical: 16),
+              //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              //   ),
+              //   child: const Text('Color HCT', style: TextStyle(fontSize: 16)),
+              // ),
             ],
           ),
         ),
@@ -335,7 +355,7 @@ class _ShadesList extends StatelessWidget {
 
   const _ShadesList({required this.useHct});
 
-  static const _primary = Color(0xFFEF5388);
+  static const _primary =  Color(0xFF34C759);//; Color(0xFFEF5388);
   static const _tones = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100];
 
   static String _hex(Color c) =>
