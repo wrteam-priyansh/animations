@@ -26,7 +26,7 @@ class _ColorLerpPaletteScreenState extends State<ColorLerpPaletteScreen> {
   @override
   void initState() {
     super.initState();
-    final p = ColorLerpPalette.fromHex('10B981');// //E75480
+    final p = ColorLerpPalette.fromHex('989898');// //E75480
     _debugPrint(p);
     _palette = p;
   }
@@ -82,7 +82,7 @@ class _ColorLerpPaletteScreenState extends State<ColorLerpPaletteScreen> {
           _Controls(
             hexController: _hexController,
             error: _error,
-            previewColor: _palette.t500,
+            previewColor: _palette.t50,
             selectedCurve: _curve,
             curveOptions: _curveOptions,
             onHexChanged: _rebuild,

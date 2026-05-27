@@ -13,9 +13,9 @@ class PalettePoint {
 /// Catmull-Rom spline curve — identical to ChromaCraft's brightness-curve engine.
 ///
 /// Control points run from (0,0) → (1,1):
-///   x=0, y=0  : darkest tone (tone 50)  maps to dark anchor (#111111)
-///   x=0.5,y=0.5: mid tone (tone 500) maps to the base/seed color
-///   x=1, y=1  : lightest tone (tone 950) maps to light anchor (#FFFFFF)
+///   x=0, y=0  : darkest tone (tone 0)   maps to dark anchor (#000000)
+///   x=0.5,y=0.5: mid tone (tone 50)  maps to the base/seed color
+///   x=1, y=1  : lightest tone (tone 100) maps to light anchor (#FFFFFF)
 ///
 /// ChromaCraft stores the curve inverted (y=1 at dark end), so the presets
 /// below are Y-flipped to match our dark→base→light lerp convention.
@@ -104,10 +104,10 @@ class ChromaCurve {
   }
 }
 
-/// Generates an 11-tone color palette (Tailwind scale) from a single base color.
+/// Generates an 11-tone color palette from a single base color.
 ///
 /// Algorithm — exact port of ChromaCraft RGB mode:
-///   1. Place 3 anchors: darkEnd (#111111) — base (seed) — lightEnd (#FFFFFF)
+///   1. Place 3 anchors: darkEnd (#000000) — base (seed) — lightEnd (#FFFFFF)
 ///   2. For each of the 11 tones, compute position t = i / (n-1)  →  0.0 to 1.0
 ///   3. Evaluate the [ChromaCurve] Catmull-Rom spline at t  →  ct (0=dark, 1=light)
 ///   4. Bilinear lerp:
@@ -116,15 +116,15 @@ class ChromaCurve {
 ///
 /// Usage:
 ///   final palette = ColorLerpPalette.fromHex('E75480');
-///   palette.t500   // base color
-///   palette[300]   // darker shade
-///   palette.all    // full `Map<int, Color>`
+///   palette.t50   // base color
+///   palette[30]   // darker shade
+///   palette.all   // full `Map<int, Color>`
 class ColorLerpPalette {
-  /// Tailwind-style tone keys for the 11 slots.
-  /// Index 0 = tone 50 (near darkEnd), index 5 = tone 500 (base), index 10 = tone 950 (near lightEnd).
-  static const List<int> toneKeys = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+  /// Tone keys for the 11 slots (0–100 scale).
+  /// Index 0 = tone 0 (darkEnd), index 5 = tone 50 (base), index 10 = tone 100 (lightEnd).
+  static const List<int> toneKeys = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
-  /// The brand / source color. Always sits at tone 500.
+  /// The brand / source color. Always sits at tone 50 (the midpoint).
   final Color base;
 
   /// Darkest anchor. Default: #000000.
@@ -168,7 +168,7 @@ class ColorLerpPalette {
     final n = toneKeys.length; // 11
 
     for (int i = 0; i < n; i++) {
-      // Normalized position: 0.0 at tone 50, 1.0 at tone 950.
+      // Normalized position: 0.0 at tone 0 (darkEnd), 1.0 at tone 100 (lightEnd).
       final t = i / (n - 1);
 
       // Catmull-Rom curve maps position → brightness (0=dark anchor, 1=light anchor).
@@ -187,21 +187,21 @@ class ColorLerpPalette {
     return result;
   }
 
-  /// Access by tone number, e.g. `palette[300]`. Falls back to [base] for unknown tones.
+  /// Access by tone number, e.g. `palette[30]`. Falls back to [base] for unknown tones.
   Color operator [](int tone) => _palette[tone] ?? base;
 
-  // Named getters — mirrors Tailwind/ChromaCraft tone naming.
-  Color get t50  => _palette[50]!;
+  // Named getters — tone 0 = darkest, tone 50 = base, tone 100 = lightest.
+  Color get t0   => _palette[0]!;
+  Color get t10  => _palette[10]!;
+  Color get t20  => _palette[20]!;
+  Color get t30  => _palette[30]!;
+  Color get t40  => _palette[40]!;
+  Color get t50  => _palette[50]!;  // always == base
+  Color get t60  => _palette[60]!;
+  Color get t70  => _palette[70]!;
+  Color get t80  => _palette[80]!;
+  Color get t90  => _palette[90]!;
   Color get t100 => _palette[100]!;
-  Color get t200 => _palette[200]!;
-  Color get t300 => _palette[300]!;
-  Color get t400 => _palette[400]!;
-  Color get t500 => _palette[500]!; // always == base
-  Color get t600 => _palette[600]!;
-  Color get t700 => _palette[700]!;
-  Color get t800 => _palette[800]!;
-  Color get t900 => _palette[900]!;
-  Color get t950 => _palette[950]!;
 
   /// All 11 tones as an unmodifiable map — useful for iterating or serialising.
   Map<int, Color> get all => Map.unmodifiable(_palette);
