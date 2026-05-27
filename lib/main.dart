@@ -1,6 +1,8 @@
 
 import 'package:animations/color_shades.dart';
 import 'package:animations/color_tokens.dart';
+import 'package:animations/screens/color_lerp_palette_screen.dart';
+import 'package:animations/screens/life_line_animation_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -269,7 +271,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
             children: [
 
               GetStartedButton(
-                onTap: () {})
+                onTap: () {
+                  Navigator.of(context).push( MaterialPageRoute(builder: (context) => const LifeLineAnimationScreen()) );
+                }),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ColorLerpPaletteScreen()),
+                ),
+                child: const Text('Color Lerp Palette'),
+              ),
 
               // IconButton(onPressed: () async{
 
